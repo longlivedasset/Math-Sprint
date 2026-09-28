@@ -2,132 +2,133 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <!-- Crucial for mobile responsive layout and zoom prevention -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <title>Math Sprint Platform</title>
     <style>
         :root {
             --primary: #534AB7;
+            --primary-hover: #433aa1;
             --primary-light: #EEEDFA;
+            --on-primary: #FFFFFF;
             --bg: #F9FAFB;
+            --card: #FFFFFF;
             --text: #111827;
             --text-light: #6B7280;
             --success: #1D9E75;
+            --warn: #D85A30;
             --border: #E5E7EB;
-        }
-        
-        * {
+            --track: #E5E7EB;
+            --input-border: #D1D5DB;
+            --hover-border: #C7C3EB;
+            --hover-bg: #FAF9FE;
+            --shadow: rgba(0,0,0,0.05);
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent; /* Removes ugly box flash on mobile tap */
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) {
+                --primary: #8F87EA; --primary-hover: #7C73E2; --primary-light: #28254A; --on-primary: #FFFFFF;
+                --bg: #111318; --card: #1B1E25; --text: #F3F4F6; --text-light: #9CA3AF;
+                --success: #3CC493; --warn: #F2825A; --border: #2E323B; --track: #2E323B;
+                --input-border: #3A3F4A; --hover-border: #4A4580; --hover-bg: #22253A; --shadow: rgba(0,0,0,0.3);
+            }
+        }
+        :root[data-theme="dark"] {
+            --primary: #8F87EA; --primary-hover: #7C73E2; --primary-light: #28254A; --on-primary: #FFFFFF;
+            --bg: #111318; --card: #1B1E25; --text: #F3F4F6; --text-light: #9CA3AF;
+            --success: #3CC493; --warn: #F2825A; --border: #2E323B; --track: #2E323B;
+            --input-border: #3A3F4A; --hover-border: #4A4580; --hover-bg: #22253A; --shadow: rgba(0,0,0,0.3);
+        }
+        html { height: 100%; scroll-padding-top: env(safe-area-inset-top, 0px); }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex; flex-direction: column; justify-content: flex-start; align-items: center;
+            min-height: 100%; margin: 0; background-color: var(--bg); color: var(--text); padding: 1rem;
         }
 
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            display: flex; 
-            flex-direction: column;
-            justify-content: flex-start; /* Better for mobile scrolling layout if content overflows */
-            align-items: center; 
-            min-height: 100vh; 
-            margin: 0; 
-            background-color: var(--bg); 
-            padding: 1rem;
-        }
-        
-        /* Mobile-responsive tab wrapper */
         .tab-wrapper {
-            display: flex;
-            background: #E5E7EB;
-            padding: 4px;
-            border-radius: 12px;
-            margin-bottom: 1rem;
-            margin-top: 1rem;
-            width: 100%;
-            max-width: 380px;
+            display: flex; background: var(--track); padding: 4px; border-radius: 12px;
+            margin: 1rem 0; width: 100%; max-width: 380px;
         }
         .tab-btn {
-            flex: 1;
-            background: none;
-            border: none;
-            padding: 12px 10px; /* Larger tap targets for fingers */
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: var(--text-light);
-            cursor: pointer;
-            border-radius: 9px;
-            transition: all 0.2s ease;
+            flex: 1; background: none; border: none; padding: 12px 10px; font-size: 0.95rem; font-weight: 600;
+            color: var(--text-light); cursor: pointer; border-radius: 9px; transition: all 0.2s ease;
         }
-        .tab-btn.active {
-            background: white;
-            color: var(--primary);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+        .tab-btn.active { background: var(--card); color: var(--primary); box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+
+        .card {
+            background: var(--card); padding: 2rem 1.5rem; border-radius: 16px; box-shadow: 0 10px 25px var(--shadow);
+            text-align: center; width: 100%; max-width: 380px; margin-bottom: 2rem;
         }
 
-        /* Responsive Card Layout */
-        .card { 
-            background: white; 
-            padding: 2rem 1.5rem; 
-            border-radius: 16px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
-            text-align: center; 
-            width: 100%; 
-            max-width: 380px; 
-            margin-bottom: 2rem;
-        }
-        
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
         h2 { margin-top: 0; margin-bottom: 0.5rem; color: var(--text); font-size: 1.5rem; font-weight: 700; }
         .subtitle { color: var(--text-light); font-size: 0.95rem; margin-bottom: 1.5rem; font-weight: 500; }
-        
-        .timer { font-size: 1.75rem; font-weight: bold; color: #D85A30; margin-bottom: 0.5rem; }
+
+        .timer { font-size: 1.75rem; font-weight: bold; color: var(--warn); margin-bottom: 0.5rem; font-variant-numeric: tabular-nums; }
+        .timer.stopwatch { color: var(--primary); }
         .stats { display: flex; justify-content: space-between; margin-bottom: 1rem; font-size: 0.95rem; color: var(--text-light); font-weight: 500; }
-        
-        .progress-container { background: #E5E7EB; border-radius: 8px; height: 10px; width: 100%; margin-bottom: 1.5rem; overflow: hidden; position: relative; }
+
+        .progress-container { background: var(--track); border-radius: 8px; height: 10px; width: 100%; margin-bottom: 1.5rem; overflow: hidden; position: relative; }
         .progress-bar { background: var(--success); height: 100%; width: 0%; transition: width 0.1s ease; }
 
-        /* Adjusted problem size so it doesn't wrap on tiny screens */
         .problem { font-size: 3rem; font-weight: bold; margin: 1.25rem 0; color: var(--text); letter-spacing: -1px; }
-        
-        /* Mobile input enhancements */
-        input[type="number"] { 
-            width: 100%; 
-            max-width: 160px; 
-            font-size: 2.25rem; 
-            text-align: center; 
-            border: 2px solid #D1D5DB; 
-            border-radius: 12px; 
-            padding: 8px; 
-            /* Removes default native iOS styling shadows */
-            -webkit-appearance: none;
-            appearance: none;
+
+        input[type="number"] {
+            width: 100%; max-width: 160px; font-size: 2.25rem; text-align: center;
+            border: 2px solid var(--input-border); border-radius: 12px; padding: 8px;
+            background: var(--card); color: var(--text);
+            -webkit-appearance: none; appearance: none;
         }
         input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(83, 74, 183, 0.2); }
-        
-        /* Big mobile tap target button */
-        .btn { background: var(--primary); color: white; border: none; padding: 16px 24px; border-radius: 12px; cursor: pointer; font-size: 1.05rem; font-weight: 600; width: 100%; transition: background 0.2s ease; margin-top: 0.5rem; }
-        .btn:hover { background: #433aa1; }
-        
+
+        .btn { background: var(--primary); color: var(--on-primary); border: none; padding: 16px 24px; border-radius: 12px; cursor: pointer; font-size: 1.05rem; font-weight: 600; width: 100%; transition: background 0.2s ease; margin-top: 0.5rem; }
+        .btn:hover { background: var(--primary-hover); }
+
+        /* Timed / 10 Questions switch */
+        .format-toggle { display: flex; gap: 6px; background: var(--track); padding: 4px; border-radius: 12px; margin-bottom: 1rem; }
+        .fmt-btn { flex: 1; border: none; background: none; padding: 10px 8px; border-radius: 9px; font-size: 0.9rem; font-weight: 600; color: var(--text-light); cursor: pointer; }
+        .fmt-btn.active { background: var(--card); color: var(--primary); box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+
         .mode-container { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.75rem; }
-        
-        /* Mobile-friendly large selector cards */
         .mode-card { position: relative; display: flex; align-items: center; justify-content: space-between; padding: 1.1rem; border: 2px solid var(--border); border-radius: 12px; cursor: pointer; transition: all 0.2s ease; text-align: left; }
-        .mode-card:hover { border-color: #C7C3EB; background: #FAF9FE; }
-        
+        .mode-card:hover { border-color: var(--hover-border); background: var(--hover-bg); }
         .mode-card input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
-        
         .mode-details { display: flex; flex-direction: column; padding-right: 8px; }
         .mode-title { font-weight: 600; color: var(--text); font-size: 0.95rem; }
         .mode-meta { font-size: 0.8rem; color: var(--text-light); margin-top: 4px; }
         .mode-badge { font-size: 0.75rem; font-weight: 700; color: var(--primary); background: var(--primary-light); padding: 5px 10px; border-radius: 6px; flex-shrink: 0; }
-        
         .mode-card.selected { border-color: var(--primary); background: var(--primary-light); }
         .mode-card.selected .mode-title { color: var(--primary); }
-        .mode-card.selected .mode-badge { color: white; background: var(--primary); }
-        
+        .mode-card.selected .mode-badge { color: var(--on-primary); background: var(--primary); }
+
         .feedback { height: 1.5rem; margin-top: 1rem; font-weight: 500; color: var(--text-light); font-size: 0.95rem; }
 
-        /* Tweaks for ultra-small screens like iPhone SE */
+        .new-best { display: inline-block; background: var(--primary-light); color: var(--primary); font-weight: 700; font-size: 0.85rem; padding: 6px 12px; border-radius: 999px; margin-bottom: 0.5rem; }
+
+        /* Run history */
+        .history { margin-top: 1.75rem; text-align: left; border-top: 1px solid var(--border); padding-top: 1.25rem; }
+        .history-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem; }
+        .history-title { font-weight: 700; font-size: 0.95rem; color: var(--text); }
+        .history-clear { background: none; border: none; color: var(--text-light); font-size: 0.8rem; cursor: pointer; padding: 4px; }
+        .history-clear.armed { color: var(--warn); font-weight: 600; }
+        .history-best { font-size: 0.85rem; color: var(--text-light); background: var(--primary-light); border-radius: 8px; padding: 8px 10px; margin-bottom: 0.5rem; }
+        .history-best strong { color: var(--primary); }
+        .history-row { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0; border-bottom: 1px solid var(--border); }
+        .history-row:last-child { border-bottom: none; }
+        .h-mode { font-size: 0.88rem; font-weight: 600; color: var(--text); }
+        .h-date { font-size: 0.75rem; color: var(--text-light); margin-top: 2px; }
+        .h-result { display: flex; flex-direction: column; align-items: flex-end; font-weight: 700; font-size: 0.95rem; color: var(--text); font-variant-numeric: tabular-nums; }
+        .h-hit { color: var(--success); }
+        .h-acc { font-size: 0.75rem; color: var(--text-light); font-weight: 500; }
+        .history-empty { font-size: 0.85rem; color: var(--text-light); text-align: center; padding: 0.5rem 0; }
+
         @media (max-width: 350px) {
             .card { padding: 1.5rem 1rem; }
             .problem { font-size: 2.5rem; }
@@ -143,7 +144,7 @@
 </div>
 
 <div class="card">
-    
+
     <!-- TAB 1: BASIC SPRINT -->
     <div id="tab-basic" class="tab-content active">
         <div id="basic-header" style="display:none;">
@@ -156,10 +157,9 @@
                 <div class="progress-bar" id="basic-progress-bar"></div>
             </div>
         </div>
-        
+
         <div id="basic-game-zone" style="display:none;">
             <div class="problem" id="basic-problem">? ± ?</div>
-            <!-- Optimized for native number pad -->
             <input type="number" inputmode="numeric" pattern="[0-9]*" id="basic-answer" autocomplete="off">
             <div class="feedback" id="basic-feedback">Type the answer!</div>
         </div>
@@ -169,7 +169,7 @@
         <div id="basic-start-zone">
             <h2>Math Sprint</h2>
             <div class="subtitle">Goal: 30 Correct Answers</div>
-            
+
             <div class="mode-container">
                 <label class="mode-card selected" onclick="selectCardDesign(this)">
                     <input type="radio" name="basicMode" value="addition" checked>
@@ -199,6 +199,8 @@
                 </label>
             </div>
             <button class="btn" onclick="basicSprint.start()">Start 60s Drill</button>
+
+            <div class="history" id="basic-history"></div>
         </div>
     </div>
 
@@ -214,10 +216,9 @@
                 <div class="progress-bar" id="advanced-progress-bar"></div>
             </div>
         </div>
-        
+
         <div id="advanced-game-zone" style="display:none;">
             <div class="problem" id="advanced-problem">? × ?</div>
-            <!-- Optimized for native number pad -->
             <input type="number" inputmode="numeric" pattern="[0-9]*" id="advanced-answer" autocomplete="off">
             <div class="feedback" id="advanced-feedback">Type the answer!</div>
         </div>
@@ -226,8 +227,13 @@
 
         <div id="advanced-start-zone">
             <h2>Advanced Math Sprint</h2>
-            <div class="subtitle">Goal: Hit 20 Correct Answers</div>
-            
+            <div class="subtitle" id="advanced-subtitle">Goal: Hit 20 Correct Answers</div>
+
+            <div class="format-toggle">
+                <button id="fmt-timed" class="fmt-btn active" onclick="advancedSprint.setFormat('timed')">⏱ Timed</button>
+                <button id="fmt-untimed" class="fmt-btn" onclick="advancedSprint.setFormat('untimed')">🏁 10 Questions</button>
+            </div>
+
             <div class="mode-container">
                 <label class="mode-card selected" onclick="selectCardDesign(this)">
                     <input type="radio" name="advancedMode" value="multiplication" checked>
@@ -235,7 +241,7 @@
                         <span class="mode-title">Multiplication Only</span>
                         <span class="mode-meta">2-digit × 1-digit</span>
                     </div>
-                    <span class="mode-badge">80s</span>
+                    <span class="mode-badge" data-timed="80s">80s</span>
                 </label>
 
                 <label class="mode-card" onclick="selectCardDesign(this)">
@@ -244,7 +250,7 @@
                         <span class="mode-title">Division Only</span>
                         <span class="mode-meta">2-3 digit ÷ 1-digit</span>
                     </div>
-                    <span class="mode-badge">90s</span>
+                    <span class="mode-badge" data-timed="90s">90s</span>
                 </label>
 
                 <label class="mode-card" onclick="selectCardDesign(this)">
@@ -253,24 +259,120 @@
                         <span class="mode-title">Combined Mix</span>
                         <span class="mode-meta">Randomly interleaved</span>
                     </div>
-                    <span class="mode-badge">90s</span>
+                    <span class="mode-badge" data-timed="90s">90s</span>
                 </label>
             </div>
-            <button class="btn" onclick="advancedSprint.start()">Start Drill</button>
+            <button class="btn" id="advanced-start-btn" onclick="advancedSprint.start()">Start Drill</button>
+
+            <div class="history" id="advanced-history"></div>
         </div>
     </div>
 
 </div>
 
 <script>
-    // Tab engine and game state handlers remain identical, ensuring rock-solid execution logic
+    // ---------- Run history (saved in this browser) ----------
+    const STORAGE_KEY = 'mathSprintHistory';
+    const MODE_LABELS = { addition: 'Addition', subtraction: 'Subtraction', multiplication: 'Multiplication', division: 'Division', combined: 'Combined' };
+
+    function loadHistory() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            const arr = raw ? JSON.parse(raw) : [];
+            return Array.isArray(arr) ? arr : [];
+        } catch (e) { return []; }
+    }
+    function writeHistory(arr) {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); } catch (e) {}
+    }
+    function saveRun(run) {
+        const h = loadHistory();
+        h.push(run);
+        while (h.length > 300) h.shift();
+        writeHistory(h);
+    }
+    function sameKindRuns(tab, mode, format) {
+        return loadHistory().filter(r => r.tab === tab && r.mode === mode && r.format === format);
+    }
+
+    function fmtClock(s) {
+        s = Math.floor(s);
+        return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+    }
+    function fmtPrecise(s) {
+        s = Math.round(s * 10) / 10;
+        const m = Math.floor(s / 60);
+        const sec = s - m * 60;
+        const str = sec.toFixed(1);
+        return m > 0 ? `${m}:${sec < 10 ? '0' : ''}${str}` : `${str}s`;
+    }
+
+    function renderHistory(tab) {
+        const el = document.getElementById(tab + '-history');
+        const mode = document.querySelector(`input[name="${tab}Mode"]:checked`).value;
+        const format = tab === 'advanced' ? advancedSprint.format : 'timed';
+        const runs = loadHistory().filter(r => r.tab === tab);
+
+        if (!runs.length) {
+            el.innerHTML = `<div class="history-head"><span class="history-title">Recent runs</span></div>
+                <div class="history-empty">No runs yet. Finish a drill and it will show up here.</div>`;
+            return;
+        }
+
+        const same = runs.filter(r => r.mode === mode && r.format === format);
+        let bestLine = '';
+        if (same.length) {
+            const kind = MODE_LABELS[mode] + (format === 'untimed' ? ', 10 questions' : ', timed');
+            const best = format === 'timed'
+                ? `Best: <strong>${Math.max(...same.map(r => r.score))} correct</strong>`
+                : `Fastest: <strong>${fmtPrecise(Math.min(...same.map(r => r.secs)))}</strong>`;
+            bestLine = `<div class="history-best">${kind}: ${best} over ${same.length} run${same.length > 1 ? 's' : ''}</div>`;
+        }
+
+        const rows = runs.slice(-8).reverse().map(r => {
+            const d = new Date(r.t);
+            const date = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+            const time = d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+            const label = MODE_LABELS[r.mode] + (r.format === 'untimed' ? ' (10 Qs)' : ` (${r.secs}s)`);
+            const result = r.format === 'untimed' ? fmtPrecise(r.secs) : `${r.score} correct`;
+            const hit = r.format === 'untimed' || r.score >= r.goal;
+            return `<div class="history-row">
+                <div><div class="h-mode">${label}</div><div class="h-date">${date}, ${time}</div></div>
+                <div class="h-result"><span class="${hit ? 'h-hit' : ''}">${result}</span><span class="h-acc">${r.acc}% accuracy</span></div>
+            </div>`;
+        }).join('');
+
+        el.innerHTML = `<div class="history-head">
+                <span class="history-title">Recent runs</span>
+                <button class="history-clear" onclick="clearHistory('${tab}', this)">Clear</button>
+            </div>${bestLine}${rows}`;
+    }
+
+    function clearHistory(tab, btn) {
+        if (btn.dataset.armed) {
+            writeHistory(loadHistory().filter(r => r.tab !== tab));
+            renderHistory(tab);
+            return;
+        }
+        btn.dataset.armed = '1';
+        btn.classList.add('armed');
+        btn.textContent = 'Tap again to clear';
+        setTimeout(() => {
+            if (!btn.isConnected) return;
+            delete btn.dataset.armed;
+            btn.classList.remove('armed');
+            btn.textContent = 'Clear';
+        }, 3000);
+    }
+
+    // ---------- Tabs & cards ----------
     function switchTab(target) {
         basicSprint.resetToMenu();
         advancedSprint.resetToMenu();
 
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        
+
         if (target === 'basic') {
             document.getElementById('btn-nav-basic').classList.add('active');
             document.getElementById('tab-basic').classList.add('active');
@@ -286,9 +388,10 @@
         element.classList.add('selected');
     }
 
+    // ---------- Basic sprint (timed, unchanged gameplay) ----------
     const basicSprint = {
-        score: 0, total: 0, timeLeft: 60, timerId: null, currentAns: 0, chosenMode: 'addition', GOAL: 30,
-        
+        score: 0, total: 0, timeLeft: 60, timerId: null, currentAns: 0, chosenMode: 'addition', GOAL: 30, DURATION: 60,
+
         generate: function() {
             let currentType = this.chosenMode;
             if (this.chosenMode === 'combined') {
@@ -308,70 +411,93 @@
             }
             document.getElementById('basic-answer').value = '';
         },
-        
+
         start: function() {
             this.chosenMode = document.querySelector('input[name="basicMode"]:checked').value;
-            this.score = 0; this.total = 0; this.timeLeft = 60;
+            this.score = 0; this.total = 0; this.timeLeft = this.DURATION;
             document.getElementById('basic-correct').textContent = '0';
             document.getElementById('basic-accuracy').textContent = '0%';
-            document.getElementById('basic-timer').textContent = '60s';
+            document.getElementById('basic-timer').textContent = this.DURATION + 's';
             document.getElementById('basic-progress-bar').style.width = '0%';
             document.getElementById('basic-feedback').textContent = 'Keep going!';
-            
+
             document.getElementById('basic-start-zone').style.display = 'none';
             document.getElementById('basic-results-zone').style.display = 'none';
             document.getElementById('basic-header').style.display = 'block';
             document.getElementById('basic-game-zone').style.display = 'block';
-            
+
             this.generate();
             document.getElementById('basic-answer').focus();
-            
+
             this.timerId = setInterval(() => {
                 this.timeLeft--;
                 document.getElementById('basic-timer').textContent = this.timeLeft + 's';
                 if (this.timeLeft <= 0) this.end();
             }, 1000);
         },
-        
+
         updateProgress: function() {
             let pct = (this.score / this.GOAL) * 100;
             if (pct > 100) pct = 100;
             document.getElementById('basic-progress-bar').style.width = pct + '%';
         },
-        
+
         end: function() {
             clearInterval(this.timerId);
             document.getElementById('basic-game-zone').style.display = 'none';
             document.getElementById('basic-header').style.display = 'none';
-            
+
             let finalAcc = this.total > 0 ? Math.round((this.score / this.total) * 100) : 0;
-            let statusHTML = this.score >= this.GOAL 
-                ? `<h2 style="color: var(--success);">Goal Smashed! 🎉</h2>` 
-                : `<h2 style="color: #D85A30;">So Close!</h2>`;
+
+            const prior = sameKindRuns('basic', this.chosenMode, 'timed');
+            const isBest = prior.length > 0 && this.score > Math.max(...prior.map(r => r.score));
+            saveRun({ t: Date.now(), tab: 'basic', mode: this.chosenMode, format: 'timed',
+                      score: this.score, total: this.total, acc: finalAcc, secs: this.DURATION, goal: this.GOAL });
+
+            let statusHTML = this.score >= this.GOAL
+                ? `<h2 style="color: var(--success);">Goal Smashed! 🎉</h2>`
+                : `<h2 style="color: var(--warn);">So Close!</h2>`;
 
             const resultsZone = document.getElementById('basic-results-zone');
             resultsZone.innerHTML = `
                 ${statusHTML}
+                ${isBest ? '<div class="new-best">New personal best!</div>' : ''}
                 <p>You answered <strong>${this.score}</strong> correctly out of ${this.total} attempts.</p>
                 <p>Accuracy: ${finalAcc}%</p>
-                <p style="font-size:0.9rem; color:#6B7280; margin-bottom:2rem;">Target Goal was: ${this.GOAL}</p>
+                <p style="font-size:0.9rem; color:var(--text-light); margin-bottom:2rem;">Target Goal was: ${this.GOAL}</p>
                 <button class="btn" onclick="basicSprint.resetToMenu()">Play Again</button>
             `;
             resultsZone.style.display = 'block';
         },
-        
+
         resetToMenu: function() {
             clearInterval(this.timerId);
             document.getElementById('basic-game-zone').style.display = 'none';
             document.getElementById('basic-header').style.display = 'none';
             document.getElementById('basic-results-zone').style.display = 'none';
             document.getElementById('basic-start-zone').style.display = 'block';
+            renderHistory('basic');
         }
     };
 
+    // ---------- Advanced sprint (timed or 10 untimed questions) ----------
     const advancedSprint = {
-        score: 0, total: 0, timeLeft: 90, timerId: null, currentAns: 0, chosenMode: 'multiplication', GOAL: 20,
-        
+        score: 0, total: 0, timeLeft: 90, duration: 90, timerId: null, currentAns: 0,
+        chosenMode: 'multiplication', GOAL: 20, QCOUNT: 10, format: 'timed', startTime: 0, running: false,
+
+        setFormat: function(f) {
+            this.format = f;
+            document.getElementById('fmt-timed').classList.toggle('active', f === 'timed');
+            document.getElementById('fmt-untimed').classList.toggle('active', f === 'untimed');
+            document.querySelectorAll('#tab-advanced .mode-badge').forEach(b => {
+                b.textContent = f === 'untimed' ? '10 Qs' : b.dataset.timed;
+            });
+            document.getElementById('advanced-subtitle').textContent = f === 'untimed'
+                ? 'Goal: Finish 10 questions as fast as you can'
+                : 'Goal: Hit 20 Correct Answers';
+            renderHistory('advanced');
+        },
+
         generate: function() {
             let currentType = this.chosenMode;
             if (this.chosenMode === 'combined') {
@@ -383,7 +509,7 @@
                 this.currentAns = a * b;
                 document.getElementById('advanced-problem').textContent = `${a} × ${b}`;
             } else {
-                let divisor = Math.floor(Math.random() * (9 - 2 + 1)) + 2; 
+                let divisor = Math.floor(Math.random() * (9 - 2 + 1)) + 2;
                 let targetQuotient = Math.floor(Math.random() * (120 - 10 + 1)) + 10;
                 let dividend = targetQuotient * divisor;
                 this.currentAns = targetQuotient;
@@ -391,69 +517,110 @@
             }
             document.getElementById('advanced-answer').value = '';
         },
-        
+
         start: function() {
             this.chosenMode = document.querySelector('input[name="advancedMode"]:checked').value;
-            this.timeLeft = (this.chosenMode === 'multiplication') ? 80 : 90;
-            this.score = 0; this.total = 0;
-            document.getElementById('advanced-correct').textContent = '0';
+            const untimed = this.format === 'untimed';
+            this.duration = (this.chosenMode === 'multiplication') ? 80 : 90;
+            this.timeLeft = this.duration;
+            this.score = 0; this.total = 0; this.running = true;
+
+            const timerEl = document.getElementById('advanced-timer');
+            timerEl.classList.toggle('stopwatch', untimed);
+            timerEl.textContent = untimed ? '0:00' : this.timeLeft + 's';
+            document.getElementById('advanced-correct').textContent = untimed ? `0/${this.QCOUNT}` : '0';
             document.getElementById('advanced-accuracy').textContent = '0%';
-            document.getElementById('advanced-timer').textContent = this.timeLeft + 's';
             document.getElementById('advanced-progress-bar').style.width = '0%';
             document.getElementById('advanced-feedback').textContent = 'Go!';
-            
+
             document.getElementById('advanced-start-zone').style.display = 'none';
             document.getElementById('advanced-results-zone').style.display = 'none';
             document.getElementById('advanced-header').style.display = 'block';
             document.getElementById('advanced-game-zone').style.display = 'block';
-            
+
             this.generate();
             document.getElementById('advanced-answer').focus();
-            
-            this.timerId = setInterval(() => {
-                this.timeLeft--;
-                document.getElementById('advanced-timer').textContent = this.timeLeft + 's';
-                if (this.timeLeft <= 0) this.end();
-            }, 1000);
+
+            if (untimed) {
+                this.startTime = Date.now();
+                this.timerId = setInterval(() => {
+                    timerEl.textContent = fmtClock((Date.now() - this.startTime) / 1000);
+                }, 250);
+            } else {
+                this.timerId = setInterval(() => {
+                    this.timeLeft--;
+                    timerEl.textContent = this.timeLeft + 's';
+                    if (this.timeLeft <= 0) this.end();
+                }, 1000);
+            }
         },
-        
+
         updateProgress: function() {
-            let pct = (this.score / this.GOAL) * 100;
+            const goal = this.format === 'untimed' ? this.QCOUNT : this.GOAL;
+            let pct = (this.score / goal) * 100;
             if (pct > 100) pct = 100;
             document.getElementById('advanced-progress-bar').style.width = pct + '%';
         },
-        
+
         end: function() {
             clearInterval(this.timerId);
+            this.running = false;
             document.getElementById('advanced-game-zone').style.display = 'none';
             document.getElementById('advanced-header').style.display = 'none';
-            
+
+            const untimed = this.format === 'untimed';
             let finalAcc = this.total > 0 ? Math.round((this.score / this.total) * 100) : 0;
-            let statusHTML = this.score >= this.GOAL 
-                ? `<h2 style="color: var(--success);">Goal Smashed! 🎉</h2>` 
-                : `<h2 style="color: #D85A30;">So Close!</h2>`;
+            const prior = sameKindRuns('advanced', this.chosenMode, this.format);
+            let html;
+
+            if (untimed) {
+                const secs = (Date.now() - this.startTime) / 1000;
+                const isBest = prior.length > 0 && secs < Math.min(...prior.map(r => r.secs));
+                saveRun({ t: Date.now(), tab: 'advanced', mode: this.chosenMode, format: 'untimed',
+                          score: this.score, total: this.total, acc: finalAcc, secs: Math.round(secs * 10) / 10, goal: this.QCOUNT });
+                html = `
+                    <h2 style="color: var(--success);">Finished! 🎉</h2>
+                    ${isBest ? '<div class="new-best">New fastest time!</div>' : ''}
+                    <p>Total time: <strong>${fmtPrecise(secs)}</strong></p>
+                    <p>Average: ${(secs / this.QCOUNT).toFixed(1)}s per question</p>
+                    <p>Accuracy: ${finalAcc}% (${this.score} correct out of ${this.total} attempts)</p>
+                    <div style="height:1.5rem"></div>
+                    <button class="btn" onclick="advancedSprint.resetToMenu()">Play Again</button>
+                `;
+            } else {
+                const isBest = prior.length > 0 && this.score > Math.max(...prior.map(r => r.score));
+                saveRun({ t: Date.now(), tab: 'advanced', mode: this.chosenMode, format: 'timed',
+                          score: this.score, total: this.total, acc: finalAcc, secs: this.duration, goal: this.GOAL });
+                const statusHTML = this.score >= this.GOAL
+                    ? `<h2 style="color: var(--success);">Goal Smashed! 🎉</h2>`
+                    : `<h2 style="color: var(--warn);">So Close!</h2>`;
+                html = `
+                    ${statusHTML}
+                    ${isBest ? '<div class="new-best">New personal best!</div>' : ''}
+                    <p>You answered <strong>${this.score}</strong> correctly out of ${this.total} attempts.</p>
+                    <p>Accuracy: ${finalAcc}%</p>
+                    <p style="font-size:0.9rem; color:var(--text-light); margin-bottom:2rem;">Target Goal was: ${this.GOAL}</p>
+                    <button class="btn" onclick="advancedSprint.resetToMenu()">Play Again</button>
+                `;
+            }
 
             const resultsZone = document.getElementById('advanced-results-zone');
-            resultsZone.innerHTML = `
-                ${statusHTML}
-                <p>You answered <strong>${this.score}</strong> correctly out of ${this.total} attempts.</p>
-                <p>Accuracy: ${finalAcc}%</p>
-                <p style="font-size:0.9rem; color:#6B7280; margin-bottom:2rem;">Target Goal was: ${this.GOAL}</p>
-                <button class="btn" onclick="advancedSprint.resetToMenu()">Play Again</button>
-            `;
+            resultsZone.innerHTML = html;
             resultsZone.style.display = 'block';
         },
-        
+
         resetToMenu: function() {
             clearInterval(this.timerId);
+            this.running = false;
             document.getElementById('advanced-game-zone').style.display = 'none';
             document.getElementById('advanced-header').style.display = 'none';
             document.getElementById('advanced-results-zone').style.display = 'none';
             document.getElementById('advanced-start-zone').style.display = 'block';
+            renderHistory('advanced');
         }
     };
 
-    // DOM LISTENERS
+    // ---------- DOM listeners ----------
     document.getElementById('basic-answer').addEventListener('input', () => {
         const ans = parseInt(document.getElementById('basic-answer').value);
         if (!isNaN(ans) && ans === basicSprint.currentAns) {
@@ -476,13 +643,20 @@
     });
 
     document.getElementById('advanced-answer').addEventListener('input', () => {
+        if (!advancedSprint.running) return;
         const ans = parseInt(document.getElementById('advanced-answer').value);
         if (!isNaN(ans) && ans === advancedSprint.currentAns) {
             advancedSprint.score++; advancedSprint.total++;
-            document.getElementById('advanced-correct').textContent = advancedSprint.score;
+            const untimed = advancedSprint.format === 'untimed';
+            document.getElementById('advanced-correct').textContent = untimed
+                ? `${advancedSprint.score}/${advancedSprint.QCOUNT}` : advancedSprint.score;
             document.getElementById('advanced-accuracy').textContent = Math.round((advancedSprint.score / advancedSprint.total) * 100) + '%';
             advancedSprint.updateProgress();
-            advancedSprint.generate();
+            if (untimed && advancedSprint.score >= advancedSprint.QCOUNT) {
+                advancedSprint.end();
+            } else {
+                advancedSprint.generate();
+            }
         }
     });
     document.getElementById('advanced-answer').addEventListener('keyup', (e) => {
@@ -495,6 +669,15 @@
             }
         }
     });
+
+    // Refresh the "best" line when a different mode is picked
+    ['basic', 'advanced'].forEach(tab => {
+        document.querySelectorAll(`input[name="${tab}Mode"]`).forEach(r =>
+            r.addEventListener('change', () => renderHistory(tab)));
+    });
+
+    renderHistory('basic');
+    renderHistory('advanced');
 </script>
 </body>
 </html>
